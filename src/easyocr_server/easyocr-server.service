@@ -1,0 +1,19 @@
+[Unit]
+Description=EasyOCR JSON API Server
+After=network.target
+
+[Service]
+Type=simple
+User=steve
+WorkingDirectory=/home/steve/code/easyocr
+ExecStart=/home/steve/code/easyocr/.venv/bin/python /home/steve/code/zzz_option_bot/src/easyocr_server/server.py
+Restart=on-failure
+RestartSec=5s
+StandardOutput=journal
+StandardError=journal
+
+# Environment
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target

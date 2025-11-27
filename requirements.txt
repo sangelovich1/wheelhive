@@ -1,0 +1,82 @@
+# Discord bot framework
+discord.py
+
+# MCP Server (FastAPI)
+fastapi
+uvicorn[standard]
+pydantic
+
+# Environment variables
+python-dotenv
+
+# Market data and finance
+yfinance
+alpha-vantage
+
+# LLM/AI integration
+anthropic
+litellm
+
+# Data processing and analysis
+pandas
+python-dateutil
+scipy
+numpy
+
+# Technical analysis
+pandas-ta
+
+# Data visualization
+matplotlib
+dataframe-image
+
+# Table formatting
+tabulate
+
+# PDF report generation
+markdown_pdf
+
+# PDF text extraction
+pypdf2
+pdfplumber
+
+# RAG (Retrieval-Augmented Generation)
+chromadb
+sentence-transformers  # Local embedding models
+
+# Web requests
+requests
+
+# RSS feed parsing
+feedparser
+
+# CLI framework (modern, feature-rich command-line interface)
+click
+
+# Regular expressions (enhanced regex module)
+regex
+
+# OCR for image text extraction
+easyocr
+Pillow
+
+# Development tools
+mypy  # Static type checker
+pytest  # Unit testing framework
+pytest-asyncio  # Async test support for Discord bot
+
+# Note: The following were in the original requirements.txt but are not currently used:
+# - timeloop (not found in codebase)
+# - beautifulsoup4 (not found in codebase)
+# - ta (technical analysis, not found in codebase)
+# - fear-and-greed (REMOVED: CNN started blocking API, replaced with custom VIX-based calculation)
+# - playwright (not found in codebase, may have been replaced by requests-based approach)
+# - pytest-playwright (testing tool, not needed for runtime)
+# - finnhub-python (commented out, not used)
+
+# If you need to re-enable any of these, uncomment the relevant lines below:
+# timeloop
+# beautifulsoup4
+# ta
+# playwright
+# pytest-playwright

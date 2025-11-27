@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WheelHive Admin Guide - Discord Bot Configuration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+        }
+
+        .command-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .command-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .command-usage {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .example {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        ul {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin-right: 8px;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .nav {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛠️ WheelHive Admin Guide</h1>
+            <p>Discord Bot Configuration for Server Administrators</p>
+        </header>
+
+        <div class="content">
+            <div class="nav">
+                <a href="#channels">📋 Channel Setup</a>
+                <a href="#faq">💡 FAQ Management</a>
+                <a href="#troubleshooting">🔧 Troubleshooting</a>
+                <a href="#permissions">🔐 Permissions</a>
+            </div>
+
+            <section id="overview">
+                <h2>Overview</h2>
+                <p>Welcome! This guide will help you configure WheelHive for your Discord server. All commands require <strong>Administrator</strong> permission and are accessed via Discord slash commands (type <code>/</code> to see them).</p>
+
+                <div class="success">
+                    <strong>✅ What You'll Be Able to Do:</strong>
+                    <ul>
+                        <li>Configure which channels the bot analyzes for trading insights</li>
+                        <li>Add custom FAQs to the AI assistant's knowledge base</li>
+                        <li>Manage your server's trading community knowledge</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="channels">
+                <h2>📋 Channel Management</h2>
+                <p>Configure which Discord channels WheelHive analyzes for trading discussions and news.</p>
+
+                <div class="command-card">
+                    <div class="command-title">/channels_list</div>
+                    <p>View all channels currently being analyzed by the bot.</p>
+
+                    <div class="command-usage">/channels_list</div>
+
+                    <div class="example">
+                        <strong>Example Output:</strong><br>
+                        📋 Configured Analysis Channels<br>
+                        Currently analyzing 4 channel(s)<br><br>
+                        💬 Community Channels<br>
+                        • #trading-chat<br>
+                        • #strategy-discussion<br><br>
+                        📰 News Channels<br>
+                        • #announcements
+                    </div>
+                </div>
+
+                <div class="command-card">
+                    <div class="command-title">/channels_add</div>
+                    <p>Add a channel for the bot to analyze.</p>
+
+                    <div class="command-usage">/channels_add channel:#your-channel category:community</div>
+
+                    <p><strong>Parameters:</strong></p>
+                    <ul>
+                        <li><code>channel</code> - Select from dropdown menu</li>
+                        <li><code>category</code> - Choose based on channel purpose:
+                            <ul>
+                                <li><strong>community</strong> - Member discussions, trade ideas, strategies, position sharing, Q&A, sentiment. Bot analyzes these for trading patterns, popular tickers, and community consensus.</li>
+                                <li><strong>news</strong> - Market news feeds, earnings announcements, economic reports, stock-specific news. Bot uses these to understand market context and connect news events to trading activity.</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div class="example">
+                        <strong>💡 Category Purpose:</strong><br>
+                        • <strong>Community channels</strong> show WHAT the community is trading<br>
+                        • <strong>News channels</strong> show WHY (market catalysts, events, context)<br>
+                        • Together, they give the AI a complete picture for better insights
+                    </div>
+
+                    <div class="success">
+                        <strong>✅ Success Message:</strong><br>
+                        Channel Added<br>
+                        Now analyzing messages from #trading-chat<br>
+                        Messages will be analyzed for trading insights
+                    </div>
+
+                    <div class="warning">
+                        <strong>⚠️ Important:</strong> The bot must have <strong>Read Messages</strong> and <strong>Read Message History</strong> permissions in the channel. The command will warn you if permissions are missing.
+                    </div>
+                </div>
+
+                <div class="command-card">
+                    <div class="command-title">/channels_remove</div>
+                    <p>Stop analyzing a specific channel.</p>
+
+                    <div class="command-usage">/channels_remove channel:#old-channel</div>
+
+                    <div class="example">
+                        <strong>When to use:</strong>
+                        <ul>
+                            <li>Channel is no longer active</li>
+                            <li>Channel repurposed for non-trading topics</li>
+                            <li>Want to reduce bot activity</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="faq">
+                <h2>💡 FAQ Management</h2>
+                <p>Build a custom knowledge base for your server's AI assistant with server-specific trading strategies and guidelines.</p>
+
+                <div class="command-card">
+                    <div class="command-title">/faq_list</div>
+                    <p>View all FAQs in your server's knowledge base.</p>
+
+                    <div class="command-usage">/faq_list</div>
+
+                    <div class="example">
+                        Shows each FAQ with:
+                        <ul>
+                            <li>Question and answer preview</li>
+                            <li>Who added it</li>
+                            <li>FAQ ID (for removal)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="command-card">
+                    <div class="command-title">/faq_add</div>
+                    <p>Add a new FAQ to your knowledge base with AI validation.</p>
+
+                    <div class="command-usage">/faq_add</div>
+
+                    <p><strong>How it works:</strong></p>
+                    <ol>
+                        <li>Command opens a form with two fields:
+                            <ul>
+                                <li><strong>Question</strong> (200 chars max)</li>
+                                <li><strong>Answer</strong> (2000 chars max)</li>
+                            </ul>
+                        </li>
+                        <li>AI validates quality (must score ≥70%)</li>
+                        <li>If approved, immediately available to AI assistant</li>
+                    </ol>
+
+                    <div class="success">
+                        <strong>✅ Good FAQ Example:</strong><br><br>
+                        <strong>Q:</strong> When should I roll a covered call that's deep in-the-money?<br><br>
+                        <strong>A:</strong> Roll a deep ITM covered call when:<br>
+                        1. Before expiration: Roll 7-14 days before expiry<br>
+                        2. Price threshold: Stock is 5-10% above call strike<br>
+                        3. Next expiry: Roll to next monthly at higher strike<br>
+                        4. Credit requirement: Ensure net credit received<br><br>
+                        Example: Stock at $57, sold $50 call → buy back and sell next month's $58 call
+                    </div>
+
+                    <div class="error">
+                        <strong>❌ Poor FAQ Example:</strong><br><br>
+                        <strong>Q:</strong> How do options work?<br>
+                        <strong>A:</strong> Options give you the right to buy or sell.<br><br>
+                        <strong>Why it fails:</strong> Too generic, incomplete, not wheel-specific
+                    </div>
+                </div>
+
+                <div class="command-card">
+                    <div class="command-title">/faq_remove</div>
+                    <p>Delete a FAQ by its ID.</p>
+
+                    <div class="command-usage">/faq_remove faq_id:faq_850508_2025-11-12_abc123</div>
+
+                    <p>Get the FAQ ID from <code>/faq_list</code></p>
+                </div>
+            </section>
+
+            <section id="quickstart">
+                <h2>⚡ Quick Start Guide</h2>
+
+                <h3>First-Time Setup (5 minutes)</h3>
+                <ol style="margin-left: 30px; font-size: 1.1em; line-height: 2;">
+                    <li>Run <code>/channels_add channel:#trading-chat category:community</code></li>
+                    <li>Run <code>/channels_add channel:#market-news category:news</code></li>
+                    <li>Run <code>/channels_list</code> to verify</li>
+                    <li>Run <code>/faq_add</code> to add server-specific knowledge</li>
+                    <li>Test: Send a message with a ticker in the configured channel</li>
+                </ol>
+
+                <div class="example">
+                    <strong>💡 Pro Tip:</strong> Start with 2-3 active channels, then expand. Too many channels can dilute insights.
+                </div>
+            </section>
+
+            <section id="troubleshooting">
+                <h2>🔧 Troubleshooting</h2>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Problem</th>
+                                <th>Solution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>"You need Administrator permissions"</td>
+                                <td>Ask server owner to grant you Administrator role in Server Settings → Roles</td>
+                            </tr>
+                            <tr>
+                                <td>"I don't have permission to read that channel"</td>
+                                <td>Right-click channel → Edit Channel → Permissions → Add @WheelHive → Enable "Read Messages" and "Read Message History"</td>
+                            </tr>
+                            <tr>
+                                <td>"FAQ Validation Failed"</td>
+                                <td>Make question more specific, provide complete answer, ensure relevance to wheel strategy/options trading</td>
+                            </tr>
+                            <tr>
+                                <td>Commands not showing up</td>
+                                <td>1. Verify you have Administrator permission<br>2. Wait 1-2 minutes after bot restart<br>3. Ensure you're in a server (not DMs)</td>
+                            </tr>
+                            <tr>
+                                <td>Bot not analyzing messages</td>
+                                <td>1. Run /channels_list to verify configuration<br>2. Check bot permissions in channel<br>3. Send test message with ticker symbol</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="permissions">
+                <h2>🔐 Required Permissions</h2>
+
+                <h3>For Administrators (You)</h3>
+                <div class="success">
+                    ✅ <strong>Discord Role:</strong> Administrator<br>
+                    ✅ <strong>Can do:</strong> Configure channels, manage FAQs, view all admin commands
+                </div>
+
+                <h3>For Bot (WheelHive)</h3>
+                <div class="success">
+                    ✅ <strong>Read Messages</strong> - Must have in each configured channel<br>
+                    ✅ <strong>Read Message History</strong> - Must have in each configured channel<br>
+                    ✅ <strong>Send Messages</strong> - To respond to commands<br>
+                    ✅ <strong>Embed Links</strong> - For formatted responses
+                </div>
+
+                <h3>How to Grant Bot Permissions</h3>
+                <ol style="margin-left: 30px;">
+                    <li>Right-click the channel → <strong>Edit Channel</strong></li>
+                    <li>Click <strong>Permissions</strong> tab</li>
+                    <li>Click <strong>+ Add Member or Role</strong></li>
+                    <li>Search for <strong>@WheelHive</strong> and select it</li>
+                    <li>Enable these permissions:
+                        <ul>
+                            <li>✅ Read Messages</li>
+                            <li>✅ Read Message History</li>
+                        </ul>
+                    </li>
+                    <li>Click <strong>Save Changes</strong></li>
+                </ol>
+            </section>
+
+            <section id="bestpractices">
+                <h2>📚 Best Practices</h2>
+
+                <h3>Understanding Channel Categories</h3>
+
+                <div class="command-card">
+                    <div class="command-title">💬 Community Channels</div>
+                    <p><strong>Purpose:</strong> Capture what your community is actually trading and thinking</p>
+
+                    <p><strong>What the bot extracts:</strong></p>
+                    <ul>
+                        <li>Trade entries (options, shares) from text messages</li>
+                        <li>Sentiment about specific tickers (bullish/bearish)</li>
+                        <li>Popular trading strategies being discussed</li>
+                        <li>Position updates and trade results</li>
+                        <li>Questions and concerns (risk indicators)</li>
+                    </ul>
+
+                    <p><strong>Best channels to add:</strong></p>
+                    <ul>
+                        <li>#trading-chat - General discussion</li>
+                        <li>#my-trades - Position sharing</li>
+                        <li>#options-strategy - Strategy discussion</li>
+                        <li>#daily-plays - Day-to-day activity</li>
+                    </ul>
+                </div>
+
+                <div class="command-card">
+                    <div class="command-title">📰 News Channels</div>
+                    <p><strong>Purpose:</strong> Provide market context so AI understands WHY trades are happening</p>
+
+                    <p><strong>What the bot uses news for:</strong></p>
+                    <ul>
+                        <li>Connect trading activity to market events</li>
+                        <li>Understand catalysts behind ticker mentions</li>
+                        <li>Identify earnings plays vs regular trades</li>
+                        <li>Track economic data impact on sentiment</li>
+                        <li>Provide richer context in AI-generated insights</li>
+                    </ul>
+
+                    <p><strong>Best channels to add:</strong></p>
+                    <ul>
+                        <li>#market-news - Bloomberg, WSJ, Reuters feeds</li>
+                        <li>#earnings-calendar - Upcoming reports</li>
+                        <li>#economic-data - Fed meetings, CPI, jobs reports</li>
+                        <li>#stock-alerts - Price alerts, unusual activity</li>
+                    </ul>
+
+                    <div class="warning">
+                        <strong>⚠️ Important:</strong> News channels should contain actual market news, not server announcements or admin posts. Use Discord webhooks or RSS bots to feed real market news into these channels.
+                    </div>
+                </div>
+
+                <h3>Channel Configuration Tips</h3>
+                <ul>
+                    <li>✅ <strong>Review monthly:</strong> Run <code>/channels_list</code> to audit active channels</li>
+                    <li>✅ <strong>Configure permissions first:</strong> Grant bot access before adding channel</li>
+                    <li>✅ <strong>Balance both categories:</strong> Aim for 60-70% community, 30-40% news channels</li>
+                    <li>✅ <strong>Quality over quantity:</strong> Better to have 3-4 active channels than 10 quiet ones</li>
+                    <li>❌ <strong>Don't add:</strong> Private channels, NSFW channels, off-topic channels, server announcements</li>
+                </ul>
+
+                <h3>FAQ Management</h3>
+                <ul>
+                    <li>✅ <strong>Focus on wheel strategy:</strong> Position management, rolling, strikes</li>
+                    <li>✅ <strong>Be specific:</strong> Include examples and step-by-step guidance</li>
+                    <li>✅ <strong>Server-specific rules:</strong> Position sizing, risk management guidelines</li>
+                    <li>✅ <strong>Keep updated:</strong> Remove outdated FAQs regularly</li>
+                    <li>❌ <strong>Don't duplicate:</strong> Bot already knows general options concepts</li>
+                    <li>❌ <strong>Avoid generic info:</strong> "What is delta?" - already in base knowledge</li>
+                </ul>
+            </section>
+
+            <section id="support">
+                <h2>💬 Need Help?</h2>
+
+                <div class="command-card">
+                    <p><strong>All responses are private!</strong> When you use admin commands, only you see the response (ephemeral messages). Other members won't see your configuration activities.</p>
+                </div>
+
+                <div class="example">
+                    <strong>📖 Resources:</strong>
+                    <ul>
+                        <li><strong>Command Count:</strong> 6 admin commands (3 channels + 3 FAQ)</li>
+                        <li><strong>Support:</strong> <a href="https://wheelhive.ai" target="_blank">wheelhive.ai</a></li>
+                        <li><strong>Issues:</strong> <a href="https://github.com/anthropics/wheelhive/issues" target="_blank">GitHub Issues</a></li>
+                        <li><strong>Community:</strong> Join our Discord server for assistance</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p><strong>WheelHive Admin Guide</strong></p>
+            <p>Where Wheel Traders Multiply Their Intelligence</p>
+            <p style="margin-top: 15px;">
+                <a href="https://wheelhive.ai">Website</a> •
+                <a href="https://discord.gg/wheelhive">Discord</a> •
+                <a href="https://github.com/anthropics/wheelhive">GitHub</a>
+            </p>
+            <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
+                Last updated: 2025-11-12 • All terminology updated to "analyze" (not "harvest")
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

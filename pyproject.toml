@@ -1,0 +1,301 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "option-bot"
+version = "0.1.0"
+description = "Discord options trading bot with automated trade tracking, analytics, LLM-powered insights, and multi-brokerage support"
+readme = "README.md"
+requires-python = ">=3.10"
+# Note: For installation, use requirements.txt (pip install -r requirements.txt)
+# This dependencies list is for reference and optional editable install (pip install -e .)
+license = {text = "MIT"}
+authors = [
+    {name = "Steve Angelovich", email = "steve.angelovich@gmail.com"}
+]
+keywords = ["options", "trading", "discord", "bot", "wheel-strategy", "rag", "llm"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+dependencies = [
+    # Discord bot framework
+    "discord.py",
+
+    # MCP Server (FastAPI)
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+
+    # Environment variables
+    "python-dotenv",
+
+    # Market data and finance
+    "yfinance",
+    "alpha-vantage",
+
+    # LLM/AI integration
+    "anthropic",
+    "litellm",
+
+    # Data processing and analysis
+    "pandas",
+    "python-dateutil",
+    "scipy",
+    "numpy",
+
+    # Technical analysis
+    "pandas-ta",
+
+    # Data visualization
+    "matplotlib",
+    "dataframe-image",
+
+    # Table formatting
+    "tabulate",
+
+    # PDF report generation
+    "markdown_pdf",
+
+    # PDF text extraction
+    "pypdf2",
+    "pdfplumber",
+
+    # RAG (Retrieval-Augmented Generation)
+    "chromadb",
+    "sentence-transformers",
+    "tiktoken",
+    "langchain",
+    "langchain-community",
+    "unstructured",
+
+    # Web requests
+    "requests",
+
+    # CLI framework
+    "click",
+
+    # Regular expressions
+    "regex",
+
+    # OCR for image text extraction
+    "easyocr",
+    "Pillow",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.7",
+    "pytest>=7.4",
+    "pytest-asyncio>=0.21",
+    "pytest-cov>=4.1",
+    "ruff>=0.1.0",
+    "pre-commit>=3.5",
+]
+
+[project.scripts]
+option-bot = "bot:main"
+option-cli = "cli:cli"
+
+[project.urls]
+Homepage = "https://gitlab.com/steve.angelovich/zzz_option_bot"
+Repository = "https://gitlab.com/steve.angelovich/zzz_option_bot"
+Issues = "https://gitlab.com/steve.angelovich/zzz_option_bot/-/issues"
+
+# ============================================================================
+# Ruff Configuration - Fast Python linter and formatter
+# ============================================================================
+[tool.ruff]
+# Target Python 3.10+ for compatibility (works with 3.10-3.13)
+target-version = "py310"
+
+# Line length (match your existing style)
+line-length = 100
+
+# Enable auto-fixing where possible
+fix = true
+
+# Exclude common directories
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    ".bot_venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+]
+
+[tool.ruff.lint]
+# Enable comprehensive rule sets
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort (import sorting)
+    "N",      # pep8-naming
+    "UP",     # pyupgrade (modernize Python syntax)
+    "B",      # flake8-bugbear (find likely bugs)
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez (datetime best practices)
+    "T10",    # flake8-debugger (no debugger statements)
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "PIE",    # flake8-pie (misc lints)
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RET",    # flake8-return (return statement issues)
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "PL",     # pylint
+    "TRY",    # tryceratops (exception handling)
+    "RUF",    # Ruff-specific rules
+]
+
+# Ignore specific rules that conflict with project style
+ignore = [
+    "E501",    # Line too long (handled by formatter)
+    "PLR0913", # Too many arguments to function call
+    "PLR2004", # Magic value used in comparison
+    "TRY003",  # Avoid specifying long messages outside exception class
+    "UP007",   # Use X | Y for type annotations (keep Optional for clarity)
+    "ISC001",  # Single line implicit string concatenation (conflicts with formatter)
+]
+
+# Allow unused variables when prefixed with underscore
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+# Test files can have additional flexibility
+"tests/**/*.py" = [
+    "ARG",     # Unused function arguments (fixtures)
+    "PLR2004", # Magic values in tests are OK
+]
+# Scripts can be less strict
+"scripts/**/*.py" = [
+    "T201",    # Allow print statements in scripts
+]
+
+[tool.ruff.lint.isort]
+# Import sorting configuration
+known-first-party = ["src"]
+force-single-line = false
+lines-after-imports = 2
+
+[tool.ruff.format]
+# Format configuration
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+# ============================================================================
+# Mypy Configuration - Static type checker
+# ============================================================================
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false  # Gradually enable as you add types
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_optional = true
+show_error_codes = true
+pretty = true
+
+# Directories to check
+files = ["src", "scripts", "tests"]
+
+# Ignore missing imports for third-party libs without stubs
+[[tool.mypy.overrides]]
+module = [
+    "discord.*",
+    "yfinance.*",
+    "pandas_ta.*",
+    "dataframe_image.*",
+    "markdown_pdf.*",
+    "easyocr.*",
+    "chromadb.*",
+    "sentence_transformers.*",
+    "langchain.*",
+    "alpha_vantage.*",
+]
+ignore_missing_imports = true
+
+# ============================================================================
+# Pytest Configuration
+# ============================================================================
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",                    # Verbose output
+    "--strict-markers",      # Strict marker usage
+    "--tb=short",           # Short traceback format
+    "--cov=src",            # Coverage for src directory
+    "--cov-report=term-missing",  # Show missing lines
+    "--cov-report=html",    # Generate HTML coverage report
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+asyncio_mode = "auto"
+
+# ============================================================================
+# Coverage Configuration
+# ============================================================================
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/migrations/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+
+# ============================================================================
+# Bandit Configuration - Security linter
+# ============================================================================
+[tool.bandit]
+exclude_dirs = [
+    "tests",
+    ".venv",
+    ".bot_venv",
+]
+skips = [
+    "B101",  # assert_used - we use asserts in tests
+    "B601",  # paramiko_calls - not applicable
+]

@@ -1,0 +1,107 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+# Install: pip install pre-commit
+# Setup: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # Ruff - Fast Python linter and formatter (replaces black, isort, flake8)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      # Run the linter
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, pyi]
+      # Run the formatter
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  # Mypy - Static type checker
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - types-requests
+          - types-python-dateutil
+          - types-tabulate
+        args: [--config-file=pyproject.toml]
+        # Only run on src and scripts to avoid external dependency issues
+        files: ^(src|scripts)/.*\.py$
+
+  # Built-in pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # File checks
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: destroyed-symlinks
+
+      # Python-specific
+      - id: check-ast                     # Validate Python syntax
+      - id: check-builtin-literals        # Require literal syntax (list() → [])
+      - id: check-docstring-first         # Docstring should be first
+      - id: debug-statements              # Check for debugger imports/breakpoints
+      - id: name-tests-test               # Ensure test files are named test_*.py
+        args: [--pytest-test-first]
+
+      # General cleanup
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  # Security checks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.0
+    hooks:
+      - id: bandit
+        args: [-c, pyproject.toml, -ll]  # Low severity, low confidence
+        additional_dependencies: ["bandit[toml]"]
+        # Skip tests directory (may have intentional "bad" patterns)
+        exclude: ^tests/
+
+  # Markdown linting (for documentation)
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+        args: [--fix, --disable, MD013]  # Disable line-length rule
+        # Exclude session notes (may have formatting quirks)
+        exclude: ^doc/sessions/
+
+# Global settings
+default_language_version:
+  python: python3
+
+# Don't fail on first error
+fail_fast: false
+
+# Files to exclude globally
+exclude: |
+  (?x)^(
+    \.git/.*|
+    \.mypy_cache/.*|
+    \.pytest_cache/.*|
+    \.ruff_cache/.*|
+    __pycache__/.*|
+    .*\.egg-info/.*|
+    build/.*|
+    dist/.*|
+    \.bot_venv/.*|
+    \.venv/.*|
+    daily_digest/.*|
+    reports/.*|
+    uploads/.*|
+    downloads/.*|
+    options_data/.*|
+    training_materials/.*/vector_db/.*
+  )$
