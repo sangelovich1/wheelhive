@@ -1,0 +1,16 @@
+[Unit]
+Description=WheelHive Discord Bot
+After=network.target
+
+[Service]
+Type=simple
+User=steve
+WorkingDirectory=/home/steve/code/wheelhive
+Environment="PATH=/home/steve/code/wheelhive/.bot_venv/bin"
+EnvironmentFile=/home/steve/code/wheelhive/.env
+ExecStart=/home/steve/code/wheelhive/.bot_venv/bin/python src/bot.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

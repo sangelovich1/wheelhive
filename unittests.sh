@@ -9,6 +9,10 @@ for arg in "$@"; do
     fi
 done
 
+# Get script directory and set PYTHONPATH to src/
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export PYTHONPATH="$SCRIPT_DIR/src:$PYTHONPATH"
+
 # Activate venv if available
 if [ -f .venv/bin/activate ]; then
     source .venv/bin/activate

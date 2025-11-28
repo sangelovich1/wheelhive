@@ -10,6 +10,9 @@ import os
 # Add src to path for imports (needed when running test file directly)
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
+# Check if running in CI environment
+IN_CI = os.getenv('CI', '').lower() in ('true', '1', 'yes')
+
 import unittest
 import pandas as pd
 from datetime import datetime
@@ -138,6 +141,7 @@ class MarketDataProviderTestMixin:
         return result
 
 
+@unittest.skipIf(IN_CI, "Skip live API tests in CI environment")
 class TestYFinanceProviderLive(MarketDataProviderTestMixin, unittest.TestCase):
     """Integration tests for YFinance provider."""
 
@@ -152,6 +156,7 @@ class TestYFinanceProviderLive(MarketDataProviderTestMixin, unittest.TestCase):
         print(f"{'='*60}")
 
 
+@unittest.skipIf(IN_CI, "Skip live API tests in CI environment")
 class TestFinnhubProviderLive(MarketDataProviderTestMixin, unittest.TestCase):
     """Integration tests for Finnhub provider."""
 
@@ -202,6 +207,7 @@ class TestFinnhubProviderLive(MarketDataProviderTestMixin, unittest.TestCase):
 #         print(f"{'='*60}")
 
 
+@unittest.skipIf(IN_CI, "Skip live API tests in CI environment")
 class TestProviderComparison(unittest.TestCase):
     """Compare outputs between providers to ensure consistency."""
 
