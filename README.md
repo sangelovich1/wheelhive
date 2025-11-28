@@ -1,5 +1,7 @@
 # WheelHive
 
+[![CI](https://github.com/sangelovich1/wheelhive/actions/workflows/ci.yml/badge.svg)](https://github.com/sangelovich1/wheelhive/actions/workflows/ci.yml)
+
 Discord bot for options wheel strategy tracking with automated trade parsing, analytics, and AI-powered insights.
 
 ## Features

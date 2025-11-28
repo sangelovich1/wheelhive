@@ -1,4 +1,5 @@
 #!/bin/bash
+# Run unit tests with optional coverage
 
 # Parse command-line arguments
 COVERAGE=false
@@ -8,18 +9,20 @@ for arg in "$@"; do
     fi
 done
 
-source .bot_venv/bin/activate
+# Activate venv if available
+if [ -f .venv/bin/activate ]; then
+    source .venv/bin/activate
+fi
 
 if [ "$COVERAGE" = true ]; then
     echo "Running tests with code coverage..."
-    python -m coverage run -m unittest discover -s tests -p '*_test.py' -v 2>&1 | tee unittests.txt
+    python -m coverage run -m unittest discover -s tests -p '*_test.py' -v
     echo ""
-    echo "Generating coverage report..."
+    echo "Coverage report:"
     python -m coverage report -m
     echo ""
-    echo "Generating HTML coverage report..."
+    echo "HTML report: htmlcov/index.html"
     python -m coverage html
-    echo "HTML coverage report generated in htmlcov/index.html"
 else
-    python -m unittest discover -s tests -p *_test.py -v 2>&1 | tee unittests.txt
+    python -m unittest discover -s tests -p '*_test.py' -v
 fi

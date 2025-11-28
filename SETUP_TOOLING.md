@@ -1,334 +1,157 @@
 # Development Tooling Setup Guide
 
-This guide walks you through setting up the development tooling for this project, including `ruff`, `mypy`, and `pre-commit` hooks.
+This guide covers the development tools and CI pipeline for WheelHive.
 
 ## Overview
 
-We use modern Python development tools:
-
-- **`pyproject.toml`** - Centralized configuration for all tools
-- **`ruff`** - Fast linter and formatter (replaces black, isort, flake8)
-- **`mypy`** - Static type checker
-- **`pre-commit`** - Automated checks before each commit
-- **`pytest`** - Unit testing with coverage
-- **`bandit`** - Security linter
+| Tool | Purpose | When It Runs |
+|------|---------|--------------|
+| `ruff` | Linting and formatting | Manual / CI |
+| `mypy` | Type checking | Manual / CI |
+| `unittest` | Unit tests | Manual / CI |
+| `coverage` | Test coverage | Manual / CI |
+| GitHub Actions | Automated CI | On push/PR to main |
 
 ## Quick Setup
 
 ```bash
-# 1. Install development dependencies
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
-pip install ruff pre-commit pytest-cov bandit[toml]
 
-# 2. Install pre-commit hooks
-pre-commit install
-
-# 3. Run hooks on all files (first time)
-pre-commit run --all-files
+# Install dev tools
+pip install ruff mypy coverage types-requests types-python-dateutil types-tabulate
 ```
 
-That's it! Now the tools will run automatically on every commit.
+## Local Development
 
-## Manual Tool Usage
-
-### Ruff - Linting and Formatting
+### Run Validation Checks
 
 ```bash
-# Check for issues (no changes)
-ruff check .
+# Syntax + type checking
+./check.sh
 
-# Fix issues automatically
-ruff check --fix .
+# Unit tests
+./unittests.sh
 
-# Format code
-ruff format .
-
-# Check + format in one go
-ruff check --fix . && ruff format .
+# Unit tests with coverage
+./unittests.sh --coverage
 ```
 
-**Configuration:** See `[tool.ruff]` in `pyproject.toml`
-
-**What it does:**
-
-- Enforces PEP 8 style
-- Sorts imports (isort)
-- Finds bugs (pyflakes, flake8-bugbear)
-- Modernizes Python syntax (pyupgrade)
-- Simplifies code (flake8-simplify)
-- ~10-100x faster than black + flake8 + isort combined
-
-### Mypy - Type Checking
+### Manual Tool Usage
 
 ```bash
-# Check types in src and scripts
+# Ruff - Linting
+ruff check src/ scripts/
+ruff check --fix src/ scripts/  # Auto-fix issues
+
+# Ruff - Formatting
+ruff format src/ scripts/
+
+# Mypy - Type checking
 mypy src/ scripts/
 
-# Check specific file
-mypy src/bot.py
+# Tests
+python -m unittest discover -s tests -p '*_test.py' -v
 
-# Count warnings (track progress)
-mypy src/ scripts/ 2>&1 | grep "error:" | wc -l
+# Coverage
+coverage run -m unittest discover -s tests -p '*_test.py'
+coverage report -m
+coverage html  # Generate HTML report in htmlcov/
 ```
 
-**Configuration:** See `[tool.mypy]` in `pyproject.toml`
+## CI Pipeline (GitHub Actions)
 
-**Current status:**
+Every push to `main` and every PR automatically runs:
 
-- Target: 0 warnings in our codebase
-- Current: ~36 warnings (down from 626 total including third-party libs)
+1. **Syntax check** - Validates all Python files compile
+2. **Type check** - Runs mypy on src/ and scripts/
+3. **Unit tests** - Runs all tests with coverage
+4. **Coverage report** - Shows test coverage percentage
 
-### Pre-commit - Automated Checks
+### View CI Results
 
-```bash
-# Run on staged files (automatic on commit)
-pre-commit run
+- **Actions tab**: https://github.com/sangelovich1/wheelhive/actions
+- **Commit status**: Green ✓ or red ✗ next to each commit
+- **Job summary**: Click into any run to see detailed results
 
-# Run on all files
-pre-commit run --all-files
+### CI Badge
 
-# Run specific hook
-pre-commit run ruff --all-files
-pre-commit run mypy --all-files
-
-# Skip hooks for emergency commit (use sparingly!)
-git commit --no-verify -m "Emergency fix"
-
-# Update hook versions
-pre-commit autoupdate
+Add to README:
+```markdown
+![CI](https://github.com/sangelovich1/wheelhive/actions/workflows/ci.yml/badge.svg)
 ```
 
-**Configuration:** See `.pre-commit-config.yaml`
+## Configuration
 
-**Hooks enabled:**
+All tool configuration is in `pyproject.toml`:
 
-1. **ruff** - Linting with auto-fix
-2. **ruff-format** - Code formatting
-3. **mypy** - Type checking (src/ and scripts/ only)
-4. **check-yaml/toml/json** - File syntax validation
-5. **check-ast** - Python syntax validation
-6. **trailing-whitespace** - Remove trailing spaces
-7. **end-of-file-fixer** - Ensure newline at EOF
-8. **debug-statements** - No debugger/breakpoint statements
-9. **bandit** - Security vulnerability checks
-10. **markdownlint** - Markdown formatting (docs)
+- `[tool.ruff]` - Linting rules and formatting
+- `[tool.mypy]` - Type checking settings
+- `[tool.coverage]` - Coverage settings
+- `[tool.bandit]` - Security checks
 
-### Pytest - Testing
-
-```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=src --cov-report=term-missing
-
-# Run specific test file
-pytest tests/trade_test.py
-
-# Run tests matching pattern
-pytest -k "test_parse"
-
-# Run only fast tests (skip slow integration tests)
-pytest -m "not slow"
-
-# Generate HTML coverage report
-pytest --cov=src --cov-report=html
-# View: open htmlcov/index.html
-```
-
-**Configuration:** See `[tool.pytest.ini_options]` in `pyproject.toml`
-
-### Bandit - Security Checks
-
-```bash
-# Check for security issues
-bandit -r src/ scripts/
-
-# Use config from pyproject.toml
-bandit -c pyproject.toml -r src/ scripts/
-```
-
-**Configuration:** See `[tool.bandit]` in `pyproject.toml`
-
-## Integration with Existing Workflow
-
-### Before (Old Workflow)
-
-```bash
-# Manual checks before commit
-./check.sh              # mypy + syntax
-./unittests.sh          # pytest
-# (manually format code)
-git add .
-git commit -m "message"
-```
-
-### After (New Workflow)
-
-```bash
-# Edit code
-vim src/bot.py
-
-# Optional: Run ruff to fix issues before staging
-ruff check --fix . && ruff format .
-
-# Stage changes
-git add .
-
-# Commit (pre-commit runs automatically!)
-git commit -m "message"
-# ✓ ruff checks and fixes issues
-# ✓ ruff formats code
-# ✓ mypy checks types
-# ✓ All file checks pass
-# → Commit succeeds if all pass
-
-# If hooks fail, fix issues and try again
-# (hooks show exactly what failed)
-```
-
-**Benefits:**
-
-- Automated - no manual `./check.sh` needed
-- Faster feedback - catches issues before commit
-- Consistent - everyone on team gets same checks
-- Auto-fix - ruff fixes most issues automatically
-
-## Customization
-
-### Disable Specific Rules
-
-If a rule is too noisy, add to ignore list in `pyproject.toml`:
+### Customize Ruff Rules
 
 ```toml
 [tool.ruff.lint]
 ignore = [
-    "E501",    # Line too long (example)
+    "E501",    # Line too long
     "PLR0913", # Too many arguments
 ]
-```
 
-### Per-File Overrides
-
-```toml
 [tool.ruff.lint.per-file-ignores]
-"scripts/**/*.py" = [
-    "T201",  # Allow print statements in scripts
-]
+"scripts/**/*.py" = ["T201"]  # Allow print in scripts
 ```
 
-### Skip Hooks Temporarily
+## Workflow Summary
 
+### Daily Development
 ```bash
-# Skip all hooks (emergency only!)
-git commit --no-verify -m "Emergency fix"
+# 1. Make changes
+# 2. Run local checks (optional but recommended)
+./check.sh
 
-# Set SKIP environment variable
-SKIP=mypy git commit -m "Skip mypy for this commit"
+# 3. Commit and push
+git add .
+git commit -m "Your message"
+git push
+
+# 4. CI runs automatically on GitHub
+# 5. Check results in Actions tab
+```
+
+### Before Important Releases
+```bash
+# Full validation
+./check.sh
+./unittests.sh --coverage
+ruff check --fix src/ scripts/
+ruff format src/ scripts/
 ```
 
 ## Troubleshooting
 
-### "ruff: command not found"
+### "mypy: command not found"
+```bash
+pip install mypy types-requests types-python-dateutil types-tabulate
+```
 
+### "ruff: command not found"
 ```bash
 pip install ruff
-# or
-pip install -e ".[dev]"  # Install with dev dependencies
 ```
 
-### "pre-commit: command not found"
-
-```bash
-pip install pre-commit
-pre-commit install
-```
-
-### Hooks are slow
-
-```bash
-# Skip slow hooks for quick commits
-SKIP=mypy git commit -m "Quick fix"
-
-# Or adjust which hooks run in .pre-commit-config.yaml
-```
-
-### Mypy errors from third-party libraries
-
-These are ignored in `pyproject.toml`:
-
-```toml
-[[tool.mypy.overrides]]
-module = ["discord.*", "yfinance.*", ...]
-ignore_missing_imports = true
-```
-
-### Ruff auto-fix broke my code
-
-```bash
-# Ruff is safe, but if issues occur:
-git diff  # Review changes
-git checkout -- <file>  # Revert if needed
-
-# Report false positives: https://github.com/astral-sh/ruff/issues
-```
-
-## Best Practices
-
-1. **Run `pre-commit run --all-files` after setup** - Ensures all existing code passes
-2. **Commit small, focused changes** - Easier to fix hook failures
-3. **Read hook output** - It tells you exactly what's wrong and how to fix it
-4. **Use `--fix` flags** - Let tools auto-fix issues: `ruff check --fix .`
-5. **Update hooks regularly** - `pre-commit autoupdate` (every few months)
+### CI failing but local passes
+- Check Python version matches (3.12)
+- Ensure all dependencies in requirements.txt
+- Check CI logs for specific error
 
 ## Additional Resources
 
-- **Ruff docs:** <https://docs.astral.sh/ruff/>
-- **Pre-commit docs:** <https://pre-commit.com/>
-- **Mypy docs:** <https://mypy.readthedocs.io/>
-- **Project config:** See `pyproject.toml` for all tool settings
-
-## Dependencies: requirements.txt vs pyproject.toml
-
-**TL;DR: Keep using `requirements.txt` - it's not deprecated!**
-
-### Current Setup (Recommended)
-
-```bash
-# Install production dependencies
-pip install -r requirements.txt
-
-# Install optional RAG dependencies
-pip install -r requirements-rag.txt
-
-# Install development tools
-pip install ruff pre-commit bandit[toml]
-```
-
-### Why Both Files?
-
-- **`requirements.txt`** - Production dependencies (what to install)
-  - Pinned versions for reproducibility
-  - Standard pip workflow
-  - Works everywhere (CI/CD, containers, etc.)
-
-- **`pyproject.toml`** - Tool configuration (how to develop)
-  - Ruff, mypy, pytest settings
-  - Project metadata
-  - Optional dependencies reference
-
-### Future Migration (Optional)
-
-If you want to switch to `pyproject.toml`-only installation:
-
-```bash
-# Option 1: Use pip-tools to sync
-pip install pip-tools
-pip-compile pyproject.toml -o requirements.txt  # Generate from pyproject.toml
-
-# Option 2: Direct install from pyproject.toml
-pip install -e .           # Install project in editable mode
-pip install -e ".[dev]"    # Install with dev dependencies
-```
-
-**For now, `requirements.txt` is the recommended approach.**
+- **Ruff docs:** https://docs.astral.sh/ruff/
+- **Mypy docs:** https://mypy.readthedocs.io/
+- **GitHub Actions:** https://docs.github.com/en/actions
