@@ -19,7 +19,7 @@ DATABASE_PATH = str(PROJECT_ROOT / "trades.db")
 
 # Logging
 LOG_FILE = "bot.log"
-MCP_LOG_FILE = "mcp_server.log"
+API_LOG_FILE = "wheelhive-api.log"
 CMDS_LOG_FILE = "cmds.log"
 MAX_LOG_SIZE = 10 * 1024 * 1024  # 10 MB
 BACKUP_COUNT = 5

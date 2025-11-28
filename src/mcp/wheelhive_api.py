@@ -114,7 +114,7 @@ from watchlists import Watchlists
 
 
 # Configure logging using util.setup_logger with custom log file
-util.setup_logger(name=None, level="INFO", console=True, log_file=const.MCP_LOG_FILE)
+util.setup_logger(name=None, level="INFO", console=True, log_file=const.API_LOG_FILE)
 logger = logging.getLogger(__name__)
 
 
@@ -4290,7 +4290,7 @@ if __name__ == "__main__":
     logger.info("=" * 60)
     logger.info("Starting Options Trading Bot MCP Server")
     logger.info(f"STARTUP TIME: {SERVER_START_TIME}")
-    logger.info(f"Logging to: {const.MCP_LOG_FILE}")
+    logger.info(f"Logging to: {const.API_LOG_FILE}")
     logger.info("Server will run on: http://0.0.0.0:8000")
     logger.info("=" * 60)
 
@@ -4299,7 +4299,7 @@ if __name__ == "__main__":
     print("🚀 MCP SERVER STARTED")
     print(f"📅 STARTUP TIME: {SERVER_START_TIME}")
     print("🌐 Server: http://0.0.0.0:8000")
-    print(f"📝 Logs: {const.MCP_LOG_FILE}")
+    print(f"📝 Logs: {const.API_LOG_FILE}")
     print("💡 Health check: http://localhost:8000/health")
     print("=" * 60 + "\n")
 

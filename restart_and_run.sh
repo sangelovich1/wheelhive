@@ -1,5 +1,5 @@
 #!/bin/bash
-# Restart MCP Server and Run Discord Bot
+# Restart WheelHive API and Run Discord Bot
 # Usage: ./restart_and_run.sh
 
 set -e  # Exit on error
@@ -9,24 +9,24 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 echo "=========================================="
-echo "Restarting MCP Server and Running Bot"
+echo "Restarting WheelHive API and Running Bot"
 echo "=========================================="
 echo ""
 
-# Step 1: Restart MCP server
-echo "→ Restarting MCP server..."
-sudo systemctl restart mcp_server.service
+# Step 1: Restart WheelHive API
+echo "→ Restarting WheelHive API..."
+sudo systemctl restart wheelhive-api.service
 
 # Wait for service to start
 sleep 2
 
 # Check if service started successfully
-if systemctl is-active --quiet mcp_server.service; then
-    echo "  ✓ MCP server restarted successfully"
+if systemctl is-active --quiet wheelhive-api.service; then
+    echo "  ✓ WheelHive API restarted successfully"
 else
-    echo "  ✗ ERROR: MCP server failed to start"
+    echo "  ✗ ERROR: WheelHive API failed to start"
     echo ""
-    sudo systemctl status mcp_server.service --no-pager
+    sudo systemctl status wheelhive-api.service --no-pager
     exit 1
 fi
 

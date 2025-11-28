@@ -1,10 +1,10 @@
-# WheelHive MCP Server
+# WheelHive API
 
-This directory contains the MCP (Model Context Protocol) server implementation that provides API access to the options trading database.
+REST API server providing access to the options trading database via the Model Context Protocol (MCP).
 
 ## Overview
 
-The MCP server exposes a FastAPI-based REST API that allows external applications (like Open WebUI or other AI assistants) to query and interact with the options trading data stored in `trades.db`.
+The WheelHive API exposes a FastAPI-based REST API that allows external applications (like Open WebUI or other AI assistants) to query and interact with the options trading data stored in `trades.db`.
 
 ## Features
 
@@ -21,53 +21,41 @@ The MCP server exposes a FastAPI-based REST API that allows external application
 ```bash
 # From project root directory
 source .venv/bin/activate
-python src/mcp/mcp_server.py
+python src/mcp/wheelhive_api.py
 ```
 
 The server will start on `http://0.0.0.0:8000`
 
 ### Systemd Service Setup
 
-The MCP server can run as a systemd service for automatic startup and monitoring.
-
 #### Install the Service
 ```bash
-# Set your project directory
-export PROJECT_DIR=/path/to/wheelhive
+# 1. Copy the service file
+sudo cp src/mcp/wheelhive-api.service /etc/systemd/system/
 
-# 1. Copy and edit the service file
-sudo cp $PROJECT_DIR/src/mcp/mcp_server.service /etc/systemd/system/
-sudo nano /etc/systemd/system/mcp_server.service  # Update paths
+# 2. Edit paths if needed
+sudo nano /etc/systemd/system/wheelhive-api.service
 
-# 2. Reload systemd to recognize the new service
+# 3. Reload systemd
 sudo systemctl daemon-reload
 
-# 3. Enable the service to start on boot
-sudo systemctl enable mcp_server
+# 4. Enable and start
+sudo systemctl enable wheelhive-api
+sudo systemctl start wheelhive-api
 
-# 4. Start the service
-sudo systemctl start mcp_server
-
-# 5. Check the status
-sudo systemctl status mcp_server
+# 5. Check status
+sudo systemctl status wheelhive-api
 ```
 
-#### Service Management Commands
+#### Service Management
 ```bash
-# Stop the service
-sudo systemctl stop mcp_server
+sudo systemctl stop wheelhive-api
+sudo systemctl restart wheelhive-api
+sudo systemctl disable wheelhive-api
 
-# Restart the service
-sudo systemctl restart mcp_server
-
-# Disable auto-start on boot
-sudo systemctl disable mcp_server
-
-# View recent logs
-sudo journalctl -u mcp_server -n 100
-
-# View logs in real-time
-sudo journalctl -u mcp_server -f
+# View logs
+sudo journalctl -u wheelhive-api -f
+sudo journalctl -u wheelhive-api -n 100
 ```
 
 ## API Endpoints
@@ -122,11 +110,10 @@ sudo journalctl -u mcp_server -f
 
 - **Server Address**: `0.0.0.0:8000` (accessible from network)
 - **Database**: `trades.db` (in project root)
-- **Log File**: `mcp_server.log` (in project root)
 
 ## Security Features
 
-The systemd service includes several security hardening measures:
+The systemd service includes security hardening:
 - `NoNewPrivileges=true` - Prevents privilege escalation
 - `PrivateTmp=true` - Isolated /tmp directory
 - `ProtectSystem=strict` - Read-only system directories
@@ -135,21 +122,14 @@ The systemd service includes several security hardening measures:
 
 ## Logging
 
-Logs are written to:
-1. **Application Log**: `mcp_server.log` in project root
-2. **Systemd Journal**: View with `sudo journalctl -u mcp_server -f`
-
-All HTTP requests are logged with:
-- Method and path
-- Query parameters
-- Client IP address
-- Response status code
-- Request duration
+View logs via systemd journal:
+```bash
+sudo journalctl -u wheelhive-api -f
+```
 
 ## Integration with Open WebUI
 
-To use with Open WebUI:
-1. Configure Open WebUI to use the MCP server at `http://localhost:8000`
+1. Configure Open WebUI to use the API at `http://localhost:8000`
 2. The server provides OpenAPI schema at `/docs` for automatic tool discovery
 3. All endpoints support CORS for browser-based access
 
@@ -157,50 +137,36 @@ To use with Open WebUI:
 
 ### Service won't start
 ```bash
-# Check service status and logs
-sudo systemctl status mcp_server
-sudo journalctl -u mcp_server -n 50
+sudo systemctl status wheelhive-api
+sudo journalctl -u wheelhive-api -n 50
 
 # Common issues:
 # - Virtual environment not found: Check PATH in service file
 # - Database locked: Close other connections to trades.db
-# - Port 8000 in use: Change port in mcp_server.py
+# - Port 8000 in use: Change port in wheelhive_api.py
 ```
 
 ### Database errors
 ```bash
-# Check database permissions
 ls -la trades.db
-
-# Ensure database exists and is readable
 sqlite3 trades.db "SELECT COUNT(*) FROM trades;"
-```
-
-### View real-time logs
-```bash
-# Application logs
-tail -f mcp_server.log
-
-# Systemd logs
-sudo journalctl -u mcp_server -f
 ```
 
 ## Development
 
-To modify the MCP server:
-1. Edit `src/mcp/mcp_server.py`
-2. Restart the service: `sudo systemctl restart mcp_server`
-3. View logs to verify: `sudo journalctl -u mcp_server -f`
-
-For development with auto-reload:
 ```bash
-# Run manually instead of as service
-python src/mcp/mcp_server.py
-# Server will auto-reload on file changes
+# Edit the API
+vim src/mcp/wheelhive_api.py
+
+# Restart service
+sudo systemctl restart wheelhive-api
+
+# Watch logs
+sudo journalctl -u wheelhive-api -f
 ```
 
 ## Files
 
-- `mcp_server.py` - Main MCP server application
-- `mcp_server.service` - Systemd service configuration (edit paths before use)
-- `README.md` - This documentation file
+- `wheelhive_api.py` - Main API server application
+- `wheelhive-api.service` - Systemd service configuration
+- `README.md` - This documentation

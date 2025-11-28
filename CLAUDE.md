@@ -188,8 +188,8 @@ src/                    # Core application code
 ├── bot.py             # Discord bot entry point
 ├── cli.py             # CLI entry point
 ├── cli/               # CLI command modules
-├── mcp/               # MCP server implementation
-│   └── mcp_server.py
+├── mcp/               # WheelHive API (MCP server)
+│   └── wheelhive_api.py
 ├── {entity}.py        # Single entity models
 ├── {entity}s.py       # Collection/database operations
 └── constants.py       # All configuration constants
