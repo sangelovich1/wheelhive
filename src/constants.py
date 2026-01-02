@@ -151,7 +151,7 @@ for id in DEV_GUILDS:
     DEV_GUILD_IDS.append(discord.Object(id=id))
 
 # Production Guild IDs
-GUILDS = [850508033041760256, 1349592236375019520, 1405962109262757980]
+GUILDS = [1349592236375019520, 1405962109262757980]
 GUILD_IDS = list()
 for id in GUILDS:
     GUILD_IDS.append(discord.Object(id=id))
