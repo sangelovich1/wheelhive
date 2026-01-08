@@ -208,7 +208,7 @@ class TestBotUploads(unittest.TestCase):
         """Test that formats_supported returns expected brokerages"""
         formats = BotUploads.formats_supported()
 
-        expected_formats = ['fidelity', 'robinhood', 'schwab', 'ibkr']
+        expected_formats = ['fidelity', 'robinhood', 'schwab', 'ibkr', 'ibkr_tx_history']
         self.assertEqual(formats, expected_formats)
 
 
