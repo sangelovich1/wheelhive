@@ -342,10 +342,27 @@ class Client(commands.Bot):
         await self.wait_until_ready()
         logger.info("News feed task ready to start")
 
+    async def on_guild_join(self, guild: discord.Guild) -> None:
+        """Refuse to operate in any guild that isn't on the allowlist."""
+        if guild.id not in const.ALLOWED_GUILD_IDS:
+            logger.warning(
+                f"Auto-leaving unauthorized guild {guild.name} ({guild.id})"
+            )
+            await guild.leave()
+
     async def on_ready(self) -> None:
         logger.info(f"Initializing bot: {self.user}")
         try:
-            # Sync to all guilds (includes both DEV and production guilds)
+            # Safety: never operate in a guild that isn't on the allowlist —
+            # leave any that slipped in (e.g. joined before this guard existed).
+            for guild in list(self.guilds):
+                if guild.id not in const.ALLOWED_GUILD_IDS:
+                    logger.warning(
+                        f"Leaving unauthorized guild {guild.name} ({guild.id})"
+                    )
+                    await guild.leave()
+
+            # Sync commands to the allowed guilds only.
             all_guilds = set(const.GUILD_IDS + const.DEV_GUILD_IDS)
             for guild in all_guilds:
                 synced = await self.tree.sync(guild=guild)

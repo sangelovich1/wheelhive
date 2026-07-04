@@ -150,11 +150,15 @@ DEV_GUILD_IDS = list()
 for id in DEV_GUILDS:
     DEV_GUILD_IDS.append(discord.Object(id=id))
 
-# Production Guild IDs
-GUILDS = [1349592236375019520, 1405962109262757980]
+# Production Guild IDs — locked to the owner's personal server only.
+GUILDS = [1349592236375019520]
 GUILD_IDS = list()
 for id in GUILDS:
     GUILD_IDS.append(discord.Object(id=id))
+
+# The only guilds this bot may operate in. It auto-leaves any other guild on
+# join and on startup (see Client.on_guild_join / on_ready).
+ALLOWED_GUILD_IDS = set(GUILDS) | set(DEV_GUILDS)
 
 # Channel configuration moved to database (guild_channels table)
 # Fallback for legacy scripts (use CLI: `python src/cli.py channels list`)
