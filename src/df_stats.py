@@ -183,9 +183,14 @@ class DFStats:
     #                         aggfunc='sum', fill_value=0, margins=margins)
     #     return df
 
-    def my_stats(self) -> str:
-        """Generate a summary of trades and dividends for the current year."""
-        year = pd.to_datetime("today").year
+    def my_stats(self, year: int | None = None) -> str:
+        """Generate a summary of trades and dividends for the specified year.
+
+        Args:
+            year: The year to generate stats for. Defaults to current year if not specified.
+        """
+        if year is None:
+            year = pd.to_datetime("today").year
         self.filter_by_year(year)
 
         df1 = self.options_by_yearmonth()

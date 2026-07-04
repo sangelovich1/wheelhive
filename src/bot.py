@@ -1146,29 +1146,36 @@ def main() -> None:
         await interaction.response.send_message(f"{h_str}```\n{table_str}```\n{s1}", ephemeral=True)
 
     @client.tree.command(name="my_trade_stats", description="Trade Stats.", guilds=const.GUILD_IDS)
-    async def my_trade_stats(interaction: discord.Interaction, account: str):
-        log_command(interaction, "my_trade_stats", account=account)
+    async def my_trade_stats(
+        interaction: discord.Interaction, account: str, year: int | None = None
+    ):
+        log_command(interaction, "my_trade_stats", account=account, year=year)
 
         user = interaction.user.name
 
         # Convert "ALL" (case-insensitive) to None for querying all accounts
         account_filter = None if account.upper() == const.ACCOUNT_ALL else account
 
+        # Normalize year (handles 2-digit, 4-digit, or None)
+        display_year = util.normalize_year(year)
+
         client.df_stats.load(user, account=account_filter)
-        table_str = client.df_stats.my_stats()
+        table_str = client.df_stats.my_stats(year=display_year)
 
         # Add account filter info to header if specified
         account_str = f" (Account: {account})" if account_filter else " (All Accounts)"
-        s1 = f"Trade Summary{account_str}\n"
+        s1 = f"Trade Summary for {display_year}{account_str}\n"
         s1 = s1 + f"```{table_str}```\n"
 
-        symbol_stats_str = client.df_stats.my_symbol_stats()
+        # Only show current month symbol stats if viewing current year
+        if display_year == util.current_year():
+            symbol_stats_str = client.df_stats.my_symbol_stats()
 
-        month = util.month_start_end(datetime.now())
-        start_date_str = month[0].strftime("%m/%d/%Y")
-        end_date_str = month[1].strftime("%m/%d/%Y")
-        s1 = s1 + f"Trade Stats for range: {start_date_str} - {end_date_str}{account_str}\n"
-        s1 = s1 + f"```{symbol_stats_str}```\n"
+            month = util.month_start_end(datetime.now())
+            start_date_str = month[0].strftime("%m/%d/%Y")
+            end_date_str = month[1].strftime("%m/%d/%Y")
+            s1 = s1 + f"Trade Stats for range: {start_date_str} - {end_date_str}{account_str}\n"
+            s1 = s1 + f"```{symbol_stats_str}```\n"
 
         await interaction.response.send_message(f"{s1}", ephemeral=True)
 
