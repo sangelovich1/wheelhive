@@ -32,6 +32,7 @@ class BrokerageType(Enum):
     ROBINHOOD = "robinhood"
     SCHWAB = "schwab"
     IBKR = "ibkr"
+    IBKR_TX_HISTORY = "ibkr_tx_history"
     UNKNOWN = "unknown"
 
 
@@ -80,6 +81,16 @@ class BotUploadIdentifier:
                            "Open Positions", "Trades", "Financial Instrument Information",
                            "Codes"],
         "data_discriminator": True,  # Has "Data" discriminator column
+    }
+
+    IBKR_TX_HISTORY_SIGNATURES: dict[str, Any] = {
+        "first_row": ["Statement", "Header", "Field Name", "Field Value"],
+        "section_name": "Transaction History",
+        "tx_history_headers": ["Date", "Account", "Description", "Transaction Type",
+                              "Symbol", "Quantity", "Price", "Gross Amount",
+                              "Commission", "Net Amount"],
+        "transaction_types": ["Buy", "Sell", "Deposit", "Assignment", "Payment in Lieu",
+                             "Withdrawal"],
     }
 
     def __init__(self):
@@ -136,6 +147,7 @@ class BotUploadIdentifier:
             BrokerageType.ROBINHOOD: self._score_robinhood(rows, lines, footer_lines),
             BrokerageType.SCHWAB: self._score_schwab(rows, lines),
             BrokerageType.IBKR: self._score_ibkr(rows, lines),
+            BrokerageType.IBKR_TX_HISTORY: self._score_ibkr_tx_history(rows, lines),
         }
 
         logger.debug(f"Confidence scores: {self.confidence_scores}")
@@ -339,6 +351,40 @@ class BotUploadIdentifier:
             if "Codes,Header" in line or "Codes,Data" in line:
                 score += 0.1
                 break
+
+        return score
+
+    def _score_ibkr_tx_history(self, rows: list, lines: list) -> float:
+        """Score the likelihood that this is an IBKR Transaction History file"""
+        score = 0.0
+
+        # Check 1: Statement header format (worth 0.2)
+        if rows and len(rows) > 0:
+            first_row = rows[0]
+            if len(first_row) > 0 and first_row[0] == "Statement":
+                score += 0.2
+
+        # Check 2: "Transaction History" section (worth 0.4) - key differentiator from Activity Statement
+        for line in lines[:30]:
+            if "Transaction History,Header" in line or "Transaction History,Data" in line:
+                score += 0.4
+                break
+
+        # Check 3: Transaction History specific headers (worth 0.2)
+        for line in lines[:15]:
+            if "Transaction Type" in line and "Gross Amount" in line:
+                score += 0.2
+                break
+
+        # Check 4: Transaction types specific to this format (worth 0.2)
+        tx_type_matches = 0
+        for line in lines[:50]:
+            for tx_type in self.IBKR_TX_HISTORY_SIGNATURES["transaction_types"]:
+                if f",{tx_type}," in line:
+                    tx_type_matches += 1
+                    break
+        if tx_type_matches >= 2:
+            score += 0.2
 
         return score
 

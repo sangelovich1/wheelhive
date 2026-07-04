@@ -27,21 +27,27 @@ def analytics():
 @click.option("--username", help="Filter by username")
 @click.option("--account", help="Filter by account")
 @click.option("--guild-id", type=int, help="Filter by guild ID")
+@click.option("--year", type=int, help="Year to show stats for (2-digit or 4-digit, e.g., 24 or 2024)")
 @click.pass_context
-def my_stats(ctx, username, account, guild_id):
-    """Show personal trading statistics (current year)"""
+def my_stats(ctx, username, account, guild_id, year):
+    """Show personal trading statistics for a given year (defaults to current year)"""
+    import util
+
     db = ctx.obj["db"]
 
     try:
-        logger.info(f"Showing my_stats for user: {username}, account: {account}, guild_id: {guild_id}")
+        # Normalize year (handles 2-digit, 4-digit, or None)
+        display_year = util.normalize_year(year)
+
+        logger.info(f"Showing my_stats for user: {username}, account: {account}, guild_id: {guild_id}, year: {display_year}")
 
         df_stats = DFStats(db)
         df_stats.load(username, account=account, guild_id=guild_id)
-        table_str = df_stats.my_stats()
+        table_str = df_stats.my_stats(year=display_year)
 
         click.echo()
         click.echo("=" * 80)
-        click.secho("PERSONAL TRADING STATISTICS (CURRENT YEAR)", bold=True)
+        click.secho(f"PERSONAL TRADING STATISTICS ({display_year})", bold=True)
         if username:
             click.echo(f"User: {username}")
         if account:

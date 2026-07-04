@@ -195,6 +195,27 @@ def current_year() -> int:
     year = now.strftime("%Y")
     return int(year)
 
+
+def normalize_year(year: int | None) -> int:
+    """Normalize a 2-digit or 4-digit year to a 4-digit year.
+
+    Args:
+        year: Year as 2-digit (e.g., 24) or 4-digit (e.g., 2024), or None for current year.
+
+    Returns:
+        4-digit year (e.g., 2024)
+
+    Examples:
+        normalize_year(None)  -> 2026 (current year)
+        normalize_year(24)    -> 2024
+        normalize_year(2024)  -> 2024
+    """
+    if year is None:
+        return current_year()
+    elif year < 100:
+        return 2000 + year
+    return year
+
 def create_pdf(source: str, output: str) -> None:
 
     # Read your Markdown content from a file or string

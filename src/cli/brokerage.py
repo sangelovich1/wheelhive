@@ -35,7 +35,7 @@ def brokerage():
 @click.option("--account", default="default", help='Account name (default: "default")')
 @click.option("--append", is_flag=True, help="Append to existing data (default: replace date range)")
 @click.option("--guild-id", type=int, help="Guild ID")
-@click.option("--format", type=click.Choice(["fidelity", "robinhood", "schwab", "ibkr"]),
+@click.option("--format", type=click.Choice(["fidelity", "robinhood", "schwab", "ibkr", "ibkr_tx_history"]),
               help="Broker format (auto-detects if not specified)")
 @click.pass_context
 def upload(ctx, username, fname, account, append, guild_id, format):
@@ -59,7 +59,7 @@ def upload(ctx, username, fname, account, append, guild_id, format):
                 click.echo()
                 click.secho(f"✗ Unable to auto-detect brokerage format (confidence: {confidence:.1%})", fg="red")
                 click.echo("\nPlease specify the format using --format parameter")
-                click.secho("Supported formats: fidelity, robinhood, schwab, ibkr", fg="cyan")
+                click.secho("Supported formats: fidelity, robinhood, schwab, ibkr, ibkr_tx_history", fg="cyan")
                 ctx.exit(1)
 
             detected_format = brokerage_type.value

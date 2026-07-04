@@ -19,6 +19,10 @@ from brokers.fidelity_shares import FidelityShares
 from brokers.ibkr_dividends import IBKRDividends
 from brokers.ibkr_options import IBKROptions
 from brokers.ibkr_shares import IBKRShares
+from brokers.ibkr_tx_history_deposits import IBKRTxHistoryDeposits
+from brokers.ibkr_tx_history_dividends import IBKRTxHistoryDividends
+from brokers.ibkr_tx_history_options import IBKRTxHistoryOptions
+from brokers.ibkr_tx_history_shares import IBKRTxHistoryShares
 from brokers.robinhood_dividends import RobinhoodDividends
 from brokers.robinhood_options import RobinhoodOptions
 from brokers.robinhood_shares import RobinhoodShares
@@ -47,9 +51,8 @@ class BotUploads:
 
 
     @classmethod
-    def formats_supported(cls):
-
-        return [ "fidelity", "robinhood", "schwab", "ibkr" ]
+    def formats_supported(cls) -> list[str]:
+        return ["fidelity", "robinhood", "schwab", "ibkr", "ibkr_tx_history"]
 
     def process(self, username: str, append=False, guild_id=None, account="default") -> tuple[bool, str]:
         processors: list[Any] = list()
@@ -70,6 +73,11 @@ class BotUploads:
             processors.append((IBKROptions(self.fname), self.trades))
             processors.append((IBKRDividends(self.fname), self.dividends))
             processors.append((IBKRShares(self.fname), self.shares))
+        elif self.format == "ibkr_tx_history":
+            processors.append((IBKRTxHistoryOptions(self.fname), self.trades))
+            processors.append((IBKRTxHistoryDividends(self.fname), self.dividends))
+            processors.append((IBKRTxHistoryShares(self.fname), self.shares))
+            processors.append((IBKRTxHistoryDeposits(self.fname), self.deposits))
         else:
             logger.info(f"Format {self.format} not supported yet")
             return False, f"Format {self.format} not supported yet"
