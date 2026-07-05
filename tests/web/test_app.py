@@ -1,4 +1,9 @@
+import tempfile
+from pathlib import Path
+
 from fastapi.testclient import TestClient
+
+import web.app as appmod
 from web.app import create_app
 
 
@@ -8,8 +13,30 @@ def test_health():
     assert r.json() == {"ok": True}
 
 
-def test_health_when_no_spa_build():
-    # No static/index.html yet -> the SPA mount is skipped and the app still
-    # builds and serves the API. GET / should 404 (no SPA), not error.
+def test_root_404_when_no_spa_build(monkeypatch):
+    # No index.html in STATIC -> the SPA mount is skipped; GET / is a 404,
+    # and the API still works.
+    empty = tempfile.mkdtemp(prefix="wh-nospa-")
+    monkeypatch.setattr(appmod, "STATIC", Path(empty))
+    c = TestClient(create_app())
+    assert c.get("/").status_code == 404
+    assert c.get("/health").json() == {"ok": True}
+
+
+def test_root_serves_spa_when_built(monkeypatch):
+    # With an index.html present in STATIC, GET / serves the SPA shell (200).
+    built = tempfile.mkdtemp(prefix="wh-spa-")
+    (Path(built) / "index.html").write_text("<!doctype html><title>WheelHive</title>")
+    monkeypatch.setattr(appmod, "STATIC", Path(built))
     r = TestClient(create_app()).get("/")
-    assert r.status_code == 404
+    assert r.status_code == 200
+    assert "WheelHive" in r.text
+
+
+def test_missing_secret_fails_closed(monkeypatch):
+    monkeypatch.setattr(appmod, "settings", type(appmod.settings)(
+        username="u", db_path="/tmp/x.db", password="p", secret=""
+    ))
+    import pytest
+    with pytest.raises(RuntimeError):
+        create_app()

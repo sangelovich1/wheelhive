@@ -12,10 +12,12 @@ STATIC = Path(__file__).parent / "static"
 
 
 def create_app() -> FastAPI:
+    if not settings.secret:
+        raise RuntimeError("WHEELHIVE_WEB_SECRET must be set (refusing insecure session key)")
     app = FastAPI(title="WheelHive Web")
     app.add_middleware(
         SessionMiddleware,
-        secret_key=settings.secret or "dev-insecure",
+        secret_key=settings.secret,
         same_site="lax",
         https_only=False,
     )

@@ -1,5 +1,5 @@
 import hmac
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from web.config import settings

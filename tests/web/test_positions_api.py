@@ -25,3 +25,11 @@ def test_summary_shape():
     assert r.status_code == 200
     body = r.json()
     assert set(body) >= {"options", "dividends", "stocks_unrealized", "year", "account"}
+
+def test_positions_unknown_account_rejected():
+    r = authed_client().get("/api/positions?account=bogus")
+    assert r.status_code == 400
+
+def test_summary_unknown_account_rejected():
+    r = authed_client().get("/api/portfolio/summary?account=bogus")
+    assert r.status_code == 400
