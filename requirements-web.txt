@@ -1,0 +1,29 @@
+# Lean runtime dependencies for the wheelhive-web companion app (src/web).
+#
+# This is the install source for the web app's own virtualenv (.web_venv) —
+# analogous to how requirements.txt is the install source for the bot. It is a
+# deliberate SUBSET of the full project dependencies: it EXCLUDES discord.py,
+# chromadb, sentence-transformers (torch), easyocr, matplotlib, litellm,
+# anthropic, langchain, etc., which the web app never imports. Keeping it lean
+# keeps the web venv small and its attack surface minimal.
+#
+# Mirrors [project.optional-dependencies].web in pyproject.toml. Verified as the
+# complete closure for the served code paths (config, auth, accounts, positions,
+# portfolio summary) by importing web.app and exercising every endpoint.
+#
+# Unpinned to match the project's existing requirements.txt convention.
+
+# Web framework + ASGI server
+fastapi
+uvicorn[standard]
+
+# Signed session cookies for Starlette SessionMiddleware.
+# NOTE: not pulled in by fastapi/starlette automatically — required explicitly.
+itsdangerous
+
+# Domain library (Db/Trades/Shares/Positions/DFStats) + its transitive needs
+pandas
+numpy
+yfinance
+markdown_pdf
+tabulate

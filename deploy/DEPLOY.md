@@ -25,17 +25,16 @@ ssh steve@wheelhive-vm.local 'cd ~/code/wheelhive && git pull --ff-only origin m
 
 ## 2. Build the web venv (lean — NO discord/torch/easyocr/chromadb)
 
-The exact dependency closure of the web app's import chain, verified on the Mac
-(python3.12). Note: NOT `pandas-ta` (no distribution) and NOT `scipy` (unused on
-the positions/summary path) — the plan's original draft listed those and would
-fail.
+Install from `requirements-web.txt` (the lean install source, mirrored by the
+`web` extra in `pyproject.toml`). It is a deliberate subset of the full project
+deps — NO discord/torch/chromadb/easyocr, and NOT `pandas-ta` (no distribution)
+or `scipy` (unused on the served paths).
 
 ```bash
 ssh steve@wheelhive-vm.local 'cd ~/code/wheelhive && \
   python3.12 -m venv .web_venv && \
   .web_venv/bin/pip install --upgrade pip && \
-  .web_venv/bin/pip install fastapi "uvicorn[standard]" itsdangerous httpx \
-    pandas numpy yfinance markdown-pdf tabulate'
+  .web_venv/bin/pip install -r requirements-web.txt'
 ```
 
 Smoke-test the import chain on the VM before starting the service:

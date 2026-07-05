@@ -99,6 +99,21 @@ dev = [
     "pytest-cov>=4.1",
     "ruff>=0.1.0",
     "pre-commit>=3.5",
+    "httpx",            # Starlette TestClient (tests/web)
+]
+
+# Lean runtime deps for the wheelhive-web companion (src/web). For installation
+# use requirements-web.txt (this list is the reference mirror). Intentionally a
+# subset of [project].dependencies — no discord/chromadb/torch/easyocr/etc.
+web = [
+    "fastapi",
+    "uvicorn[standard]",
+    "itsdangerous",     # Starlette SessionMiddleware (not pulled by fastapi)
+    "pandas",
+    "numpy",
+    "yfinance",
+    "markdown_pdf",
+    "tabulate",
 ]
 
 [project.scripts]
