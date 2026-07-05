@@ -12,3 +12,10 @@ def test_accounts_shape():
     body = r.json()
     assert "accounts" in body and isinstance(body["accounts"], list)
     assert body["username"]
+
+def test_positions_shape():
+    r = authed_client().get("/api/positions")
+    assert r.status_code == 200
+    body = r.json()
+    assert set(body) >= {"stocks", "options", "account"}
+    assert isinstance(body["stocks"], list) and isinstance(body["options"], list)
