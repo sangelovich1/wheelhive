@@ -1,0 +1,19 @@
+[Unit]
+Description=WheelHive Web (companion dashboard)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=steve
+WorkingDirectory=/home/steve/code/wheelhive/src
+EnvironmentFile=/home/steve/code/wheelhive/.env
+ExecStart=/home/steve/code/wheelhive/.web_venv/bin/python -m web.app
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/steve/code/wheelhive
+
+[Install]
+WantedBy=multi-user.target
