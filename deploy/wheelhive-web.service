@@ -1,0 +1,24 @@
+[Unit]
+Description=WheelHive Web (companion dashboard)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=steve
+WorkingDirectory=/home/steve/code/wheelhive/src
+EnvironmentFile=/home/steve/code/wheelhive/.env
+ExecStart=/home/steve/code/wheelhive/.web_venv/bin/python -m web.app
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/steve/code/wheelhive
+# Allow binding a privileged port (e.g. 80) as the unprivileged 'steve' user.
+# Port is chosen via WHEELHIVE_WEB_PORT in the EnvironmentFile (default 8080);
+# these caps are harmless when an unprivileged port is used.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
