@@ -33,6 +33,7 @@ from df_stats import DFStats
 from dividends import Dividends
 from extrinsicvalue import ExtrinsicValue
 from guild_channels import GuildChannels
+from guild_objects import DEV_GUILD_IDS, GUILD_IDS
 from llm_analyzer import LLMAnalyzer
 from market_sentiment import MarketSentiment
 from message import Message
@@ -363,7 +364,7 @@ class Client(commands.Bot):
                     await guild.leave()
 
             # Sync commands to the allowed guilds only.
-            all_guilds = set(const.GUILD_IDS + const.DEV_GUILD_IDS)
+            all_guilds = set(GUILD_IDS + DEV_GUILD_IDS)
             for guild in all_guilds:
                 synced = await self.tree.sync(guild=guild)
                 logger.info(f"Synced {len(synced)} commands to guild.id {guild.id}")
@@ -909,7 +910,7 @@ def main() -> None:
     client = Client(command_prefix="!", intents=intents)
 
     # TODO: Re-enable team_stats in the future if needed
-    # @client.tree.command(name="team_stats", description="Team Stats", guilds=const.GUILD_IDS)
+    # @client.tree.command(name="team_stats", description="Team Stats", guilds=GUILD_IDS)
     # @app_commands.choices(team_report=[
     #     app_commands.Choice(name="Monthly Trade Summary", value="options_by_yearmonth"),
     # ])
@@ -930,7 +931,7 @@ def main() -> None:
     #     await interaction.response.send_message(s1, ephemeral = False)
 
     @client.tree.command(
-        name="about", description="Information about WheelHive", guilds=const.GUILD_IDS
+        name="about", description="Information about WheelHive", guilds=GUILD_IDS
     )
     async def about(interaction: discord.Interaction):
         log_command(interaction, "about")
@@ -959,7 +960,7 @@ def main() -> None:
         await interaction.response.send_message(s1, ephemeral=True)
 
     @client.tree.command(
-        name="extrinsic_value", description="Calculate Extrinsic Value", guilds=const.GUILD_IDS
+        name="extrinsic_value", description="Calculate Extrinsic Value", guilds=GUILD_IDS
     )
     async def extrinsic_value(interaction: discord.Interaction, ticker: str, strikes: str):
         log_command(interaction, "extrinsic_value", ticker=ticker, strikes=strikes)
@@ -974,7 +975,7 @@ def main() -> None:
     @client.tree.command(
         name="market_sentiment",
         description="Get current market sentiment indicators (VIX, Fear & Greed, Crypto F&G)",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     async def market_sentiment_cmd(interaction: discord.Interaction):
         log_command(interaction, "market_sentiment")
@@ -996,7 +997,7 @@ def main() -> None:
     @client.tree.command(
         name="probability_of_profit",
         description="Calculate Probability of Profit (POP) for an option",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     @app_commands.choices(
         option_type=[
@@ -1051,7 +1052,7 @@ def main() -> None:
             )
 
     @client.tree.command(
-        name="schedule_potus", description="Schedule for POTUS.", guilds=const.GUILD_IDS
+        name="schedule_potus", description="Schedule for POTUS.", guilds=GUILD_IDS
     )
     async def schedule_potus(interaction: discord.Interaction, sdate: str | None = None):
         if sdate == None:
@@ -1071,7 +1072,7 @@ def main() -> None:
                 f"Schedule not found in cache for {sdate}.", ephemeral=True
             )
 
-    @client.tree.command(name="my_trades", description="Trade Summary.", guilds=const.GUILD_IDS)
+    @client.tree.command(name="my_trades", description="Trade Summary.", guilds=GUILD_IDS)
     @app_commands.choices(
         table=[
             app_commands.Choice(name="Options", value="trades"),
@@ -1162,7 +1163,7 @@ def main() -> None:
         s1 = f"Page {page} of {cnt}.{filter_str}\n"
         await interaction.response.send_message(f"{h_str}```\n{table_str}```\n{s1}", ephemeral=True)
 
-    @client.tree.command(name="my_trade_stats", description="Trade Stats.", guilds=const.GUILD_IDS)
+    @client.tree.command(name="my_trade_stats", description="Trade Stats.", guilds=GUILD_IDS)
     async def my_trade_stats(
         interaction: discord.Interaction, account: str, year: int | None = None
     ):
@@ -1199,7 +1200,7 @@ def main() -> None:
     @client.tree.command(
         name="my_open_positions",
         description="View current stock and option positions.",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     async def my_open_positions(interaction: discord.Interaction, account: str):
         log_command(interaction, "my_open_positions", account=account)
@@ -1239,7 +1240,7 @@ def main() -> None:
             await interaction.followup.send(f"```{table_str}```", ephemeral=True)
 
     @client.tree.command(
-        name="my_accounts", description="List all accounts with trade data.", guilds=const.GUILD_IDS
+        name="my_accounts", description="List all accounts with trade data.", guilds=GUILD_IDS
     )
     async def my_accounts(interaction: discord.Interaction):
         log_command(interaction, "my_accounts")
@@ -1264,7 +1265,7 @@ def main() -> None:
         await interaction.response.send_message(s1, ephemeral=True)
 
     @client.tree.command(
-        name="report_profit", description="Generate profit summary report", guilds=const.GUILD_IDS
+        name="report_profit", description="Generate profit summary report", guilds=GUILD_IDS
     )
     async def report_profit(
         interaction: discord.Interaction, account: str, symbol_exclude: str | None = None
@@ -1299,7 +1300,7 @@ def main() -> None:
     @client.tree.command(
         name="report_symbol",
         description="Generate ETF/symbol details report",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     async def report_symbol(interaction: discord.Interaction, account: str, symbol: str):
         log_command(interaction, "report_symbol", account=account, symbol=symbol)
@@ -1332,7 +1333,7 @@ def main() -> None:
     @client.tree.command(
         name="report_options_pivot",
         description="Generate options pivot report (current year)",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     async def report_options_pivot(interaction: discord.Interaction, account: str):
         log_command(interaction, "report_options_pivot", account=account)
@@ -1362,7 +1363,7 @@ def main() -> None:
             file_attachment = discord.File(file, filename=report_name)
             await interaction.followup.send(file=file_attachment, ephemeral=True)
 
-    @client.tree.command(name="trade", description="Record option trade(s)", guilds=const.GUILD_IDS)
+    @client.tree.command(name="trade", description="Record option trade(s)", guilds=GUILD_IDS)
     async def trade(interaction: discord.Interaction):
         log_command(interaction, "trade")
 
@@ -1372,7 +1373,7 @@ def main() -> None:
         await interaction.response.send_modal(modal)
 
     @client.tree.command(
-        name="delete", description="Delete a transaction by id", guilds=const.GUILD_IDS
+        name="delete", description="Delete a transaction by id", guilds=GUILD_IDS
     )
     @app_commands.choices(
         table=[
@@ -1402,7 +1403,7 @@ def main() -> None:
     @client.tree.command(
         name="delete_all",
         description="Delete all options, dividends, shares and deposits for an account.  Use with caution",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     async def delete_all(interaction: discord.Interaction, account: str):
         log_command(interaction, "delete_all", account=account)
@@ -1421,7 +1422,7 @@ def main() -> None:
 
         await interaction.response.send_message(s1, ephemeral=True)
 
-    @client.tree.command(name="download", description="Download trades", guilds=const.GUILD_IDS)
+    @client.tree.command(name="download", description="Download trades", guilds=GUILD_IDS)
     async def download(interaction: discord.Interaction, account: str):
         log_command(interaction, "download", account=account)
 
@@ -1454,7 +1455,7 @@ def main() -> None:
             )
 
     @client.tree.command(
-        name="upload", description="Brokerage upload (auto-detects format)", guilds=const.GUILD_IDS
+        name="upload", description="Brokerage upload (auto-detects format)", guilds=GUILD_IDS
     )
     async def upload(
         interaction: discord.Interaction,
@@ -1548,7 +1549,7 @@ def main() -> None:
     @client.tree.command(
         name="scan_puts",
         description="Scan PUT options chain for trade opportunities",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     @app_commands.describe(
         symbols="Comma-separated symbols to scan (e.g., 'ETHU,TSLA'). Default: your watchlist",
@@ -1662,7 +1663,7 @@ def main() -> None:
     @client.tree.command(
         name="scan_calls",
         description="Scan CALL options chain for trade opportunities",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     @app_commands.describe(
         symbols="Comma-separated symbols to scan (e.g., 'ETHU,TSLA'). Default: your watchlist",
@@ -1973,7 +1974,7 @@ def main() -> None:
 
             return callback
 
-    @client.tree.command(name="help", description="Interactive help guide", guilds=const.GUILD_IDS)
+    @client.tree.command(name="help", description="Interactive help guide", guilds=GUILD_IDS)
     async def help(interaction: discord.Interaction):
         log_command(interaction, "help")
 
@@ -1981,7 +1982,7 @@ def main() -> None:
         await interaction.response.send_message(embed=view.pages[0], view=view, ephemeral=True)
 
     @client.tree.command(
-        name="my_watchlist", description="View your watchlist", guilds=const.GUILD_IDS
+        name="my_watchlist", description="View your watchlist", guilds=GUILD_IDS
     )
     async def my_watchlist(interaction: discord.Interaction):
         log_command(interaction, "my_watchlist")
@@ -2009,7 +2010,7 @@ def main() -> None:
     @client.tree.command(
         name="my_watchlist_add",
         description="Add symbols to your watchlist (space or comma separated)",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     async def my_watchlist_add(interaction: discord.Interaction, symbols: str):
         log_command(interaction, "my_watchlist_add", symbols=symbols)
@@ -2050,7 +2051,7 @@ def main() -> None:
     @client.tree.command(
         name="my_watchlist_remove",
         description="Remove symbols from your watchlist (space or comma separated)",
-        guilds=const.GUILD_IDS,
+        guilds=GUILD_IDS,
     )
     async def my_watchlist_remove(interaction: discord.Interaction, symbols: str):
         log_command(interaction, "my_watchlist_remove", symbols=symbols)
@@ -2092,7 +2093,7 @@ def main() -> None:
     @client.tree.command(
         name="llm_models",
         description="List available AI models for analysis",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     async def llm_models(interaction: discord.Interaction):
         log_command(interaction, "llm_models")
@@ -2153,7 +2154,7 @@ def main() -> None:
     @client.tree.command(
         name="llm_status",
         description="Show your current AI model selection",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     async def llm_status(interaction: discord.Interaction):
         log_command(interaction, "llm_status")
@@ -2184,7 +2185,7 @@ def main() -> None:
             await interaction.response.send_message(f"Error getting status: {e!s}", ephemeral=True)
 
     @client.tree.command(
-        name="llm_set", description="Set your preferred AI model", guilds=const.DEV_GUILD_IDS
+        name="llm_set", description="Set your preferred AI model", guilds=DEV_GUILD_IDS
     )
     async def llm_set(interaction: discord.Interaction, model_key: str):
         log_command(interaction, "llm_set", model_key=model_key)
@@ -2248,7 +2249,7 @@ def main() -> None:
     @client.tree.command(
         name="analyze",
         description="AI-powered portfolio review with live market data",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     async def analyze(interaction: discord.Interaction):
         log_command(interaction, "analyze")
@@ -2274,7 +2275,7 @@ def main() -> None:
     @client.tree.command(
         name="opportunities",
         description="Find trading opportunities based on your positions",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     async def opportunities(interaction: discord.Interaction):
         log_command(interaction, "opportunities")
@@ -2300,7 +2301,7 @@ def main() -> None:
     @client.tree.command(
         name="ask",
         description="Ask AI a custom question about your portfolio",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     @app_commands.describe(question="Your question (e.g., 'What are my riskiest positions?')")
     async def ask(interaction: discord.Interaction, question: str):
@@ -2331,7 +2332,7 @@ def main() -> None:
     @client.tree.command(
         name="catch-up",
         description="Get a digest of community activity for missed days",
-        guilds=const.DEV_GUILD_IDS,  # Testing in dev guild only
+        guilds=DEV_GUILD_IDS,  # Testing in dev guild only
     )
     @app_commands.check(is_sangelovich)  # Only visible/usable by sangelovich
     @app_commands.describe(
@@ -2509,7 +2510,7 @@ def main() -> None:
     @client.tree.command(
         name="tutor",
         description="Start an interactive AI tutor conversation about wheel strategy",
-        guilds=const.DEV_GUILD_IDS,  # Testing in dev guild
+        guilds=DEV_GUILD_IDS,  # Testing in dev guild
     )
     @app_commands.describe(
         question="Your question about wheel strategy (creates thread, answers immediately)"
@@ -2690,7 +2691,7 @@ def main() -> None:
     # @client.tree.command(
     #     name="ai_assistant",
     #     description="Ask the AI assistant about wheel strategy (Author only)",
-    #     guilds=const.DEV_GUILD_IDS,  # Testing in dev guild only
+    #     guilds=DEV_GUILD_IDS,  # Testing in dev guild only
     # )
     # @app_commands.check(is_author)
     # @app_commands.describe(
@@ -2873,7 +2874,7 @@ def main() -> None:
     @client.tree.command(
         name="channels_list",
         description="List all configured analysis channels",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     @app_commands.checks.has_permissions(administrator=True)
     async def channels_list(interaction: discord.Interaction):
@@ -2930,7 +2931,7 @@ def main() -> None:
     @client.tree.command(
         name="channels_add",
         description="Add a channel for message analysis",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     @app_commands.describe(
         channel="The channel to analyze messages from",
@@ -3025,7 +3026,7 @@ def main() -> None:
     @client.tree.command(
         name="channels_remove",
         description="Remove a channel from analysis",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     @app_commands.describe(channel="The channel to stop analyzing")
     @app_commands.checks.has_permissions(administrator=True)
@@ -3079,7 +3080,7 @@ def main() -> None:
     @client.tree.command(
         name="faq_list",
         description="List all FAQs in knowledge base",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     @app_commands.checks.has_permissions(administrator=True)
     async def faq_list(interaction: discord.Interaction):
@@ -3153,7 +3154,7 @@ def main() -> None:
     @client.tree.command(
         name="faq_add",
         description="Add FAQ to knowledge base",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     @app_commands.checks.has_permissions(administrator=True)
     async def faq_add(interaction: discord.Interaction):
@@ -3178,7 +3179,7 @@ def main() -> None:
     @client.tree.command(
         name="faq_remove",
         description="Remove FAQ from knowledge base",
-        guilds=const.DEV_GUILD_IDS,
+        guilds=DEV_GUILD_IDS,
     )
     @app_commands.describe(faq_id="The FAQ ID to remove (use /faq_list to see IDs)")
     @app_commands.checks.has_permissions(administrator=True)

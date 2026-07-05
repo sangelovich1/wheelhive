@@ -10,7 +10,6 @@ import os
 # Use absolute path to ensure all components (Discord bot, MCP server, CLI) use the same database
 import pathlib
 
-import discord
 from dotenv import load_dotenv
 
 
@@ -146,15 +145,9 @@ ESSENTIAL_TOOLS = [
 
 # DEV GUILD IDs
 DEV_GUILDS = [1349592236375019520]
-DEV_GUILD_IDS = list()
-for id in DEV_GUILDS:
-    DEV_GUILD_IDS.append(discord.Object(id=id))
 
 # Production Guild IDs — locked to the owner's personal server only.
 GUILDS = [1349592236375019520]
-GUILD_IDS = list()
-for id in GUILDS:
-    GUILD_IDS.append(discord.Object(id=id))
 
 # The only guilds this bot may operate in. It auto-leaves any other guild on
 # join and on startup (see Client.on_guild_join / on_ready).
