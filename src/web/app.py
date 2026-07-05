@@ -3,6 +3,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from web.config import settings
 from web.auth import router as auth_router
+from web.routes.positions import router as positions_router
 
 
 def create_app() -> FastAPI:
@@ -14,6 +15,7 @@ def create_app() -> FastAPI:
         https_only=False,
     )
     app.include_router(auth_router)
+    app.include_router(positions_router)
 
     @app.get("/health")
     def health():
