@@ -19,3 +19,9 @@ def test_positions_shape():
     body = r.json()
     assert set(body) >= {"stocks", "options", "account"}
     assert isinstance(body["stocks"], list) and isinstance(body["options"], list)
+
+def test_summary_shape():
+    r = authed_client().get("/api/portfolio/summary")
+    assert r.status_code == 200
+    body = r.json()
+    assert set(body) >= {"options", "dividends", "stocks_unrealized", "year", "account"}

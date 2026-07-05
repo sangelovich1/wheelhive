@@ -239,26 +239,32 @@ class DFStats:
         """
         Convert stats to dictionary format for JSON serialization.
         Returns monthly breakdown with totals (numeric values preserved).
+
+        Empty-safe: for a period with no activity, columns absent from the
+        merged frame contribute 0.0 instead of raising KeyError.
         """
         df_options = self.options_by_yearmonth()
         df_dividends = self.dividend_by_yearmonth()
         df_merged = self.merge_dataframes(df_options, df_dividends)
-        df_merged.sort_values(by="Date", inplace=True)
+        if "Date" in df_merged.columns:
+            df_merged.sort_values(by="Date", inplace=True)
 
-        # Calculate totals
+        def _col_sum(col: str) -> float:
+            return float(df_merged[col].sum()) if col in df_merged.columns else 0.0
+
         totals = {
             "Date": "Total",
-            "STO": float(df_merged["STO"].sum()),
-            "BTC": float(df_merged["BTC"].sum()),
-            "BTO": float(df_merged["BTO"].sum()),
-            "STC": float(df_merged["STC"].sum()),
-            "Premium": float(df_merged["Premium"].sum()),
-            "Dividends": float(df_merged["Dividends"].sum())
+            "STO": _col_sum("STO"),
+            "BTC": _col_sum("BTC"),
+            "BTO": _col_sum("BTO"),
+            "STC": _col_sum("STC"),
+            "Premium": _col_sum("Premium"),
+            "Dividends": _col_sum("Dividends"),
         }
 
         return {
             "monthly": df_merged.to_dict("records"),
-            "totals": totals
+            "totals": totals,
         }
 
 
