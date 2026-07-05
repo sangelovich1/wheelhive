@@ -40,3 +40,19 @@ def test_missing_secret_fails_closed(monkeypatch):
     import pytest
     with pytest.raises(RuntimeError):
         create_app()
+
+
+def test_main_reads_port_env(monkeypatch):
+    # main() honors WHEELHIVE_WEB_PORT (default 8080) so the service can bind
+    # port 80 on the VM without a code change.
+    import uvicorn
+    captured = {}
+    monkeypatch.setattr(uvicorn, "run", lambda *a, **k: captured.update(k))
+    monkeypatch.setenv("WHEELHIVE_WEB_PORT", "80")
+    appmod.main()
+    assert captured["port"] == 80
+
+    captured.clear()
+    monkeypatch.delenv("WHEELHIVE_WEB_PORT", raising=False)
+    appmod.main()
+    assert captured["port"] == 8080

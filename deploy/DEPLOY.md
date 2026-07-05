@@ -56,9 +56,17 @@ Append to `/home/steve/code/wheelhive/.env`:
 ```
 WHEELHIVE_WEB_USERNAME=sangelovich
 WHEELHIVE_WEB_DB=/home/steve/code/wheelhive/trades.db
+WHEELHIVE_WEB_PORT=80
 WHEELHIVE_WEB_PASSWORD=<choose a strong password>
 WHEELHIVE_WEB_SECRET=<64 random hex chars: `openssl rand -hex 32`>
 ```
+
+**Port choice.** `WHEELHIVE_WEB_PORT` (default `8080`) sets the listen port.
+Use `80` only if nothing else on the VM already binds it — check first:
+`ssh steve@wheelhive-vm.local 'ss -tlnp "sport = :80"'`. Port 80 is privileged;
+the unit grants `CAP_NET_BIND_SERVICE` so the `steve` user can bind it. If 80 is
+taken, set `WHEELHIVE_WEB_PORT=8080` (or another free high port) and open that
+port in the ufw rule below instead.
 
 ## 4. Install the service + open the LAN port (root, via Proxmox)
 
@@ -68,15 +76,18 @@ qm guest exec 137 -- bash -c '
   cp /home/steve/code/wheelhive/deploy/wheelhive-web.service /etc/systemd/system/
   systemctl daemon-reload
   systemctl enable --now wheelhive-web.service
-  ufw allow from 192.168.68.0/22 to any port 8080 proto tcp
+  ufw allow from 192.168.68.0/22 to any port 80 proto tcp
   sleep 2; systemctl is-active wheelhive-web.service'
 ```
+
+(Use the port you set in `WHEELHIVE_WEB_PORT` for the ufw rule — `80` here, or
+`8080` if you kept the default.)
 
 ## 5. Verify from the Mac
 
 ```bash
-curl -s http://wheelhive-vm.local:8080/health          # {"ok":true}
-# browser -> http://wheelhive-vm.local:8080 -> login -> dashboard
+curl -s http://wheelhive-vm.local/health          # {"ok":true}  (port 80)
+# browser -> http://wheelhive-vm.local -> login -> dashboard
 # (grids empty until data is imported; tiles show 0 / current year)
 ```
 
