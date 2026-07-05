@@ -9,6 +9,7 @@ trades.db*
 trades.bk
 .env
 .venv
+.web_venv
 .vscode
 *.csv
 *.db
